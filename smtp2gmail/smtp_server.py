@@ -95,6 +95,13 @@ class GmailProxyHandler(AsyncMessage):
                         msg_plain = part_plain
                     if part_html: 
                         msg_html = part_html
+            else:
+                if email_msg.get_content_type().startswith('text'):
+                    full_content = email_msg.get_payload().decode('utf-8', errors='ignore')
+                    if email_msg.get_content_type() == 'text/plain':
+                        msg_plain = full_content
+                    if email_msg.get_content_type() == 'text/html':
+                        msg_html = full_content
             # else:
                 # TODO: HANDLE ATTACHMENTS INLINE IMAGES ETC..
             params = {
@@ -183,9 +190,12 @@ class PrintMessageHandler(AsyncMessage):
                     if part_html: 
                         msg_html = part_html
             else:
-                msg_html = email_msg.get_payload(decode=True)
-                if isinstance(msg_html, bytes):
-                    msg_html = msg_html.decode("utf-8", errors="ignore")
+                if email_msg.get_content_type().startswith('text'):
+                    full_content = email_msg.get_payload().decode('utf-8', errors='ignore')
+                    if email_msg.get_content_type() == 'text/plain':
+                        msg_plain = full_content
+                    if email_msg.get_content_type() == 'text/html':
+                        msg_html = full_content
 
             if msg_plain:
                 print(f"Plain Message: {msg_plain}")
