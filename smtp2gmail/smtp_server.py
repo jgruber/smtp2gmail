@@ -89,9 +89,7 @@ class GmailProxyHandler(AsyncMessage):
 
             # Log message body preview (first 100 characters)
             if email_msg.is_multipart():
-                print(f"Root message is multipart with {len(message.get_payload())} parts")
                 for i, part in enumerate(message.get_payload()):
-                    print(f"\nProcessing root part {i + 1}:")
                     (part_plain, part_html) = process_mime_part(part)
                     if part_plain: 
                         msg_plain = part_plain
