@@ -97,7 +97,7 @@ class GmailProxyHandler(AsyncMessage):
                         msg_html = part_html
             else:
                 if email_msg.get_content_type().startswith('text'):
-                    full_content = email_msg.get_payload().decode('utf-8', errors='ignore')
+                    full_content = email_msg.get_payload(decode=True).decode('utf-8', errors='ignore')
                     if email_msg.get_content_type() == 'text/plain':
                         msg_plain = full_content
                     if email_msg.get_content_type() == 'text/html':
@@ -191,7 +191,7 @@ class PrintMessageHandler(AsyncMessage):
                         msg_html = part_html
             else:
                 if email_msg.get_content_type().startswith('text'):
-                    full_content = email_msg.get_payload().decode('utf-8', errors='ignore')
+                    full_content = email_msg.get_payload(decode=True).decode('utf-8', errors='ignore')
                     if email_msg.get_content_type() == 'text/plain':
                         msg_plain = full_content
                     if email_msg.get_content_type() == 'text/html':
