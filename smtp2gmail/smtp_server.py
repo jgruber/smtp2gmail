@@ -1,5 +1,6 @@
 import asyncio
 import email
+import os
 
 from simplegmail import Gmail
 
@@ -45,9 +46,10 @@ def process_mime_part(part, level=0, debug_print=False):
 
 class GmailProxyHandler(AsyncMessage):
 
-    def __init__(self):
+    def __init__(self, client_secret_file='./client_secret.json', *args, **kwargs):
         print("📝 Server will proxy emails through GMAIL API")
-        self.gmail = Gmail(client_secret_file='client_secret.json', noauth_local_webserver=True)
+        gmail_token_file=f"{os.path.dirname(client_secret_file)}/gmail_token.json"
+        self.gmail = Gmail(client_secret_file=client_secret_file, access_type='offline', creds_file=gmail_token_file, noauth_local_webserver=True)
         super().__init__()
 
 
@@ -123,7 +125,7 @@ class GmailProxyHandler(AsyncMessage):
 class PrintMessageHandler(AsyncMessage):
     """Custom SMTP handler that extracts and prints CC/BCC recipients"""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         print("📝 Server will print email attributes to standard out")
         super().__init__()
 
@@ -212,12 +214,13 @@ class PrintMessageHandler(AsyncMessage):
 class SMTPServerManager:
     """Manager class for the SMTP server"""
 
-    def __init__(self, host="localhost", port=8025, handler=None):
+    def __init__(self, host="localhost", port=8025, handler=None, client_secret_file='./client_secret.json'):
         self.host = host
         self.port = port
         if not handler:
-            handler = PrintMessageHandler()
+            handler = PrintMessageHandler(client_secret_file=client_secret_file)
         self.handler = handler
+        self.client_secret_file = client_secret_file
         self.controller = None
 
     def start_server(self):
